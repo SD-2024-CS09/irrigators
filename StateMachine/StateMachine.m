@@ -33,7 +33,8 @@ classdef StateMachine
             state = obj.currentState;
         end
         
-        % Method to print decision based on the current state
+        % Params N/A
+        % returns the decision based on state
         function decision = makeDecision(obj)
             switch obj.currentState
                 case 'Below Lower Bound'
@@ -44,6 +45,31 @@ classdef StateMachine
                     decision = 'Value is within acceptable range';
                 otherwise
                     decision = 'Unknown state';
+            end
+        end
+
+        function obj = setLower(obj, bound)
+            if bound < obj.upperBound
+                obj.lowerBound = bound;
+            else
+                error('Lower bound must be less than upper bound.');
+            end
+        end
+
+        function obj = setUpper(obj, bound)
+            if bound > obj.lowerBound
+                obj.upperBound = bound;
+            else
+                error('Upper bound must be greater than lower bound.');
+            end
+        end
+
+        function obj = setBounds(obj, upper, lower)
+            if upper > lower
+                obj.upperBound = upper;
+                obj.lowerBound = lower;
+            else
+                error('Lower bound must be less than upper bound.');
             end
         end
     end
