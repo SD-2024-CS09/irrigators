@@ -65,7 +65,7 @@ classdef sm
             end
         end
 
-        function obj = setBounds(obj, upper, lower)
+        function obj = setBounds(obj, lower, upper)
             if upper > lower
                 obj.upperBound = upper;
                 obj.lowerBound = lower;
