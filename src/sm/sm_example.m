@@ -6,7 +6,7 @@ depletionRate = 0.5;     % Rate at which water depletes per iteration
 refillAmount = 5;        % Amount of water added when refilling
 
 % Initialize the StateMachine object
-sm = StateMachine(lowerBound, upperBound);
+stateMachine = sm(lowerBound, upperBound);
 
 % Set the current water level
 currentWaterLevel = initialWaterLevel;
@@ -14,14 +14,14 @@ currentWaterLevel = initialWaterLevel;
 % Start the simulation loop
 while true
     % Update the state based on the current water level
-    sm = sm.updateState(currentWaterLevel);
+    stateMachine = stateMachine.updateState(currentWaterLevel);
     
     % Get the current decision from the state machine
-    decision = sm.makeDecision();
+    decision = stateMachine.makeDecision();
     
     % Display the current water level, state, and decision
     fprintf('Water Level: %.2f, State: %s, Decision: %s\n', ...
-        currentWaterLevel, sm.getCurrentState(), decision);
+        currentWaterLevel, stateMachine.getCurrentState(), decision);
     
     % Act based on the decision
     if strcmp(decision, 'Increase value')

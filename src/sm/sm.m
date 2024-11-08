@@ -7,7 +7,7 @@ classdef sm
     
     methods
         % Constructor to initialize the bounds and set the initial state
-        function obj = StateMachine(lowerBound, upperBound)
+        function obj = sm(lowerBound, upperBound)
             if lowerBound >= upperBound
                 error('Lower bound must be less than upper bound.');
             end
