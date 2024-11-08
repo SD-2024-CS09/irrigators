@@ -13,27 +13,26 @@ currentWaterLevel = initialWaterLevel;
 
 % Start the simulation loop
 while true
-    % Deplete the water level
-    currentWaterLevel = currentWaterLevel - depletionRate;
-    
     % Update the state based on the current water level
     sm = sm.updateState(currentWaterLevel);
     
     % Get the current decision from the state machine
     decision = sm.makeDecision();
     
-    % Display the current water level and state decision
+    % Display the current water level, state, and decision
     fprintf('Water Level: %.2f, State: %s, Decision: %s\n', ...
         currentWaterLevel, sm.getCurrentState(), decision);
     
     % Act based on the decision
     if strcmp(decision, 'Increase value')
-        % Refill water if below lower bound
+        % Refill water if in Increase state
         currentWaterLevel = currentWaterLevel + refillAmount;
         fprintf('Refilling water. New Water Level: %.2f\n', currentWaterLevel);
+    elseif strcmp(decision, 'Decrease value')
+        % Deplete water if in Decrease state
+        currentWaterLevel = currentWaterLevel - depletionRate;
     end
     
     % Pause for a short duration to simulate time passing
     pause(1);
 end
-

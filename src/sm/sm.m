@@ -1,4 +1,4 @@
-classdef StateMachine
+classdef sm
     properties
         lowerBound
         upperBound
@@ -14,17 +14,20 @@ classdef StateMachine
             
             obj.lowerBound = lowerBound;
             obj.upperBound = upperBound;
-            obj.currentState = 'Within Bounds';  % Initialize with a neutral state
+            obj.currentState = 'Increase';  % Initialize with Increase state
         end
         
-        % Method to update the state based on the input value
+        % Method to update the state based on the current value
         function obj = updateState(obj, value)
-            if value < obj.lowerBound
-                obj.currentState = 'Below Lower Bound';
-            elseif value > obj.upperBound
-                obj.currentState = 'Above Upper Bound';
-            else
-                obj.currentState = 'Within Bounds';
+            switch obj.currentState
+                case 'Increase'
+                    if value >= obj.upperBound
+                        obj.currentState = 'Decrease';
+                    end
+                case 'Decrease'
+                    if value <= obj.lowerBound
+                        obj.currentState = 'Increase';
+                    end
             end
         end
         
@@ -33,21 +36,19 @@ classdef StateMachine
             state = obj.currentState;
         end
         
-        % Params N/A
-        % returns the decision based on state
+        % Method to make a decision based on the current state
         function decision = makeDecision(obj)
             switch obj.currentState
-                case 'Below Lower Bound'
+                case 'Increase'
                     decision = 'Increase value';
-                case 'Above Upper Bound'
+                case 'Decrease'
                     decision = 'Decrease value';
-                case 'Within Bounds'
-                    decision = 'Value is within acceptable range';
                 otherwise
                     decision = 'Unknown state';
             end
         end
 
+        % Setters for bounds with validation
         function obj = setLower(obj, bound)
             if bound < obj.upperBound
                 obj.lowerBound = bound;
@@ -74,5 +75,3 @@ classdef StateMachine
         end
     end
 end
-
-
