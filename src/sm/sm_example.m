@@ -8,6 +8,8 @@ refillAmount = 5;        % Amount of water added when refilling
 % Initialize the StateMachine object
 stateMachine = sm(lowerBound, upperBound);
 
+thingSpeakConnection = ts_connection(2667716,'RE7V83AT4USIDZN7','6AO4PYC5RM7D1KJX');
+
 % Set the current water level
 currentWaterLevel = initialWaterLevel;
 
@@ -28,11 +30,14 @@ while true
         % Refill water if in Increase state
         currentWaterLevel = currentWaterLevel + refillAmount;
         fprintf('Refilling water. New Water Level: %.2f\n', currentWaterLevel);
+        ThingSpeakConnection.writeChannel(2,1)
     elseif strcmp(decision, 'Decrease value')
         % Deplete water if in Decrease state
         currentWaterLevel = currentWaterLevel - depletionRate;
+        thingSpeakConnection.writeChannel(2,0)
     end
     
+
     % Pause for a short duration to simulate time passing
-    pause(1);
+    pause(5);
 end
