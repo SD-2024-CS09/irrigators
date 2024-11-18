@@ -1,4 +1,4 @@
-function []=mqttclient_setup(config_file)
+function []=mqtt_client(config_file)
     function cargs = read_cargs(config_file)
         f = fopen(config_file);
         raw_text = fread(f);
@@ -17,7 +17,7 @@ function []=mqttclient_setup(config_file)
 
 mqClient = subscribe_to_mqtt(read_cargs(config_file));
 while true
-    pause(30);
+    pause(120);
     dataTT = read(mqClient);
     clear mqClient;
     writetimetable(dataTT, "reponse.csv", "WriteMode","append");
