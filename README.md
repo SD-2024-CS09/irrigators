@@ -1,9 +1,9 @@
 
 
-to run the state machine unit tests, execute the following command at the root of the project:
+to run the state machine unit tests, execute the following command at ```test/sm```:
 
 ```shell
-matlab -batch "addpath('src/sm'); results = runtests(fullfile(pwd, 'test', 'sm', 'sm_test.m')); disp(results);"
+matlab -batch "run('run_sm_tests.m');"
 ```
 
 
