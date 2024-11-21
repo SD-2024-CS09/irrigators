@@ -66,7 +66,7 @@ classdef ts_connection
             while ~success && retries < maxRetries
                 try
                     % Attempt to write data
-                    thingSpeakWrite(obj.ChannelID, Value, 'Fields', Field, 'WriteKey', obj.writeAPIKey);
+                    thingSpeakWrite(obj.ChannelID,'Fields', Field,'Values', Value, 'WriteKey', obj.writeAPIKey);
                     success = true;
                 catch ME
                     % Handle the error and retry
