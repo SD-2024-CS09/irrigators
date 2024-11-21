@@ -2,14 +2,12 @@
 initialWaterLevel = 15;  % Initial water level (within bounds)
 lowerBound = 10;         % Minimum acceptable water level
 upperBound = 20;         % Maximum acceptable water level
-depletionRate = 0.5;     % Rate at which water depletes per iteration
-refillAmount = 5;        % Amount of water added when refilling
 
 % Initialize the StateMachine object
 stateMachine = sm(lowerBound, upperBound);
 
-thingSpeakConnection = ts_connection(2667716,'RE7V83AT4USIDZN7','6AO4PYC5RM7D1KJX');
-
+thingSpeakValue = ts_connection(2667716,'RE7V83AT4USIDZN7','6AO4PYC5RM7D1KJX');
+thingSpeakDecision = ts_connection(2756308,'OHUMTAKIQY4CC2I7','LEOTSB0DZBX02WH1');
 % Set the current water level
 currentWaterLevel = initialWaterLevel;
 
@@ -28,16 +26,14 @@ while true
     % Act based on the decision
     if strcmp(decision, 'Increase value')
         % Refill water if in Increase state
-        currentWaterLevel = currentWaterLevel + refillAmount;
         fprintf('Refilling water. New Water Level: %.2f\n', currentWaterLevel);
-        ThingSpeakConnection.writeChannel(2,1)
+        thingSpeakDecision.writeChannel(1,1)
     elseif strcmp(decision, 'Decrease value')
         % Deplete water if in Decrease state
-        currentWaterLevel = currentWaterLevel - depletionRate;
-        thingSpeakConnection.writeChannel(2,0)
+        thingSpeakDecision.writeChannel(1,0)
     end
     
-
+    currentWaterLevel = thingSpeakValue.readChannel(1);
     % Pause for a short duration to simulate time passing
-    pause(5);
+    pause(30);
 end
