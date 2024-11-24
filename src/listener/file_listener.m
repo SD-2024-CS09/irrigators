@@ -22,7 +22,7 @@ end
 while true 
     pause(5) % check every 5 seconds
     
-    jsondecode(fileread(jsonFile)); % refresh the data
+    jsonData = jsondecode(fileread(jsonFile)); % refresh the data
     wateringValue = jsonData.watering;
     if wateringValue ~= lastWateringValue 
         lastWateringValue = wateringValue; % update the watering status when needed
