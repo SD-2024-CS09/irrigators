@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Irrigator Irrigation</title>
+  <style>
+    .banner {
+      background: #AAAAAA;
+    }
+
+    .water-switch-container {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .loader {
+      margin: 5px;
+      border: 5px solid #AAAAAA;
+      border-top: 5px solid #000000;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="banner">
+    <h1>Irrigator Irrigation</h1>
+  </div>
+  <div class="iot-data">
+    <h2>Current Soil Moisture</h2>
+    <iframe width="450" height="260" style="border: 1px solid #cccccc;"
+      src="https://thingspeak.com/channels/2667716/charts/1?bgcolor=%23ffffff&color=%23d62020&days=1&dynamic=true&results=200&type=line"></iframe>
+    <div class="water-switch-container">
+      <button id="water-switch"></button>
+      <div class="loader" id="water-switch-loader"></div>
+    </div>
+</body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("water-switch").innerHTML = "Fetching irrigation status...";
+    fetchWateringStatus().then(function (response) {
+      setWateringButtonText(response);
+    });
+  });
+
+  document.getElementById("water-switch").onclick = function () { fetchSwitchWatering() };
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async function fetchWateringStatus() {
+    var response = await fetch("https://api.thingspeak.com/channels/2756308/fields/1.json?results=1");
+    var responseJson = await response.json();
+    var feedsArray = responseJson.feeds[responseJson.feeds.length - 1];
+    var state = parseInt(feedsArray["field1"]);
+    if (state == NaN) {
+      alert("Error: Could not fetch irrigation state.")
+      return -1;
+    }
+    return state;
+  }
+
+  function setWateringButtonText(status) {
+    if (status > 0) {
+      document.getElementById("water-switch").innerHTML = "Stop Watering";
+    } else {
+      document.getElementById("water-switch").innerHTML = "Start Watering";
+    }
+    setWateringSwitchLoadingView(false);
+  }
+
+  function setWateringButtonTextLoading(status) {
+    if (status > 0) {
+      document.getElementById("water-switch").innerHTML = "Starting water cycle...";
+    } else {
+      document.getElementById("water-switch").innerHTML = "Stopping water cycle...";
+    }
+    setWateringSwitchLoadingView(true);
+  }
+
+  function setWateringSwitchLoadingView(visibility) {
+    console.log(document.getElementById("water-switch-loader"));
+    if (visibility == true) {
+      document.getElementById("water-switch-loader").style.visibility = 'visible';
+    } else {
+      document.getElementById("water-switch-loader").style.visibility = 'hidden';
+    }
+  }
+
+  async function waitForWaterStatusChange(new_state) {
+    // We can only write every 15 seconds, so the delay for check is 17 seconds initally
+    // and then 5 seconds on retry
+    timeout_max_retries = 2;
+    timeout_time_per_retry = 5000;
+
+    await sleep(17000)
+    var status;
+    for (let i = 0; i < timeout_max_retries; i++) {
+      status = await fetchWateringStatus();
+      if (status == new_state) {
+        setWateringButtonText(status);
+        return true;
+      }
+      await sleep(5000)
+    }
+    setWateringButtonText(status);
+    alert("Error: Watering status could not be updated.")
+  }
+
+
+  async function fetchSwitchWatering() {
+    var status = await fetchWateringStatus();
+    let new_state = 0;
+    if (status == 0) {
+      new_state = 1;
+    }
+    fetch("updatewaterswitch.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      body: `state=${new_state}`,
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res > 0) {
+          alert("Error: Watering update could not be passed to state machine.")
+        }
+        else {
+          setWateringButtonTextLoading(new_state);
+          waitForWaterStatusChange(new_state);
+        }
+      });
+  }
+
+</script>
+
+</html>
