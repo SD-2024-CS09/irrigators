@@ -1,6 +1,3 @@
-% Decalre global values that are needed in callbacks
-global wateringStateMachine thingSpeakUpdateStateRequest;
-
 % Read config files for set up values.
 thingSpeakCommConfigFile = "tsconfig.json";
 stateMachineConfigFile = "smconfig.json";
@@ -16,15 +13,16 @@ stateMachineConfig = JSONtoObj(stateMachineConfigFile);
 % Set up MQTT Clients and Post Request Handlers for Thingspeak
 % Communication
 
-% MQTT client for ThingSpeak sensor channels
-thingSpeakMQTTClient = initMQTTClientFromConfig(mqttConfig, updateMachineOnMQTTCallback);
-
 % Post request handlers for ThingSpeak sensor and state channels channel
-thingSpeakSensorRequest = ts_connection(requestSensorConfig.channelID, requestSensorConfig.readAPIKey, requestSensorConfig.writeAPIKey);
-thingSpeakUpdateStateRequest = ts_connection(requestStateConfig.channelID, requestStateConfig.readAPIKey, requestStateConfig.writeAPIKey);
+thingSpeakSensorRequest = thingspeakcomm.request.ts_connection(requestSensorConfig.channelID, requestSensorConfig.readAPIKey, requestSensorConfig.writeAPIKey);
+thingSpeakUpdateStateRequest = thingspeakcomm.request.ts_connection(requestStateConfig.channelID, requestStateConfig.readAPIKey, requestStateConfig.writeAPIKey);
 
 % Initialize the StateMachine object
 wateringStateMachine = statemachine.sm(stateMachineConfig.initalState, stateMachineConfig.lowerBound, stateMachineConfig.upperBound);
+
+% MQTT client for ThingSpeak sensor channels
+updateWaterCallback = @(topic, data)updateMachineOnMQTTCallback(topic, data, wateringStateMachine, thingSpeakUpdateStateRequest);
+thingSpeakMQTTClient = initMQTTClientFromConfig(mqttConfig, updateWaterCallback);
 
 % Reads a Json file passed by file name into an object with JSON values as
 % properties.
@@ -39,23 +37,22 @@ end
 % Initializes and returns a MQTT client subscribed to the channels in the
 % specfied config.
 function newMqttClient = initMQTTClientFromConfig(config, mqttCallback)
-    newMqttClient = mqttclient(config.broker_url,Port=config.port,ClientID=cargs.client_id,Username=config.username,Password=config.password);
-    topics = convertCharsToStrings(cargs.subscription_topics)';
+    newMqttClient = mqttclient(config.brokerURL,Port=config.port,ClientID=config.clientID,Username=config.username,Password=config.password);
+    topics = convertCharsToStrings(config.topics)';
     for topic = topics
-        subscribe(newMqttClient, topic, "Callback", @mqttCallback);
+        subscribe(newMqttClient, topic, "callback", mqttCallback);
     end
 end
 
 % Callback to run on receiving new data from Thingspeak MQQT Broker for
 % value channels
-function success = updateMachineOnMQTTCallback(topic, data)
+function updateMachineOnMQTTCallback(~, data, uStateMachine, requestHandler)
     % Get the current decision from the state machine
-    global wateringStateMachine thingSpeakUpdateStateRequest;
-    decision = wateringStateMachine.makeDecision();
-    if decision ~= wateringStateMachine.currentState()
-        success = thingSpeakUpdateStateRequest.writeChannel(1, decision);
+    decision = uStateMachine.makeDecision(data);
+    if decision ~= uStateMachine.currentState()
+        success = requestHandler.writeChannel(1, decision);
         if success
-            wateringStateMachine.updateState(decision);
+            uStateMachine.updateState(decision);
         end
     end
 end

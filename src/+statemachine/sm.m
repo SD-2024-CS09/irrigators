@@ -56,20 +56,20 @@ classdef sm
         % below lower bounds. If value is in bounds, current state will be
         % returned.
         % Usage: decision = obj.makeDecision();
-        function decision = makeDecision(obj)
+        function decision = makeDecision(obj, value)
             switch obj.currentState
                 case 1
-                    if 1 >= obj.upperBound
+                    if value >= obj.upperBound
                         decision = 0;
-                    else
-                        decision = obj.currentState;
+                        return;
                     end
                 case 0
-                    if 1 <= obj.lowerBound
+                    if value <= obj.lowerBound
                         decision = 1;
-                    else
-                        decision = obj.currentState;
+                        return;
                     end
+                otherwise
+                    decision = obj.currentState;
             end
         end
 
