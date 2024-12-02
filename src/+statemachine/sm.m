@@ -10,18 +10,18 @@ classdef sm
         % Constructor to initialize the bounds and set the initial state
         % 
         % Name: sm
-        % Purpose: Initialize an instance of the sm class with specified lower and upper bounds, and set the initial state to 'Increase'.
+        % Purpose: Initialize an instance of the sm class with specified lower and upper bounds and initial state.
         % Pre: lowerBound < upperBound
-        % Post: Object is created with specified bounds and an initial state of 'Increase'
-        % Usage: obj = sm(10, 100);
-        function obj = sm(lowerBound, upperBound)
+        % Post: Object is created with specified bounds and inital state
+        % Usage: obj = sm(10, 100, 0);
+        function obj = sm(initialState, lowerBound, upperBound)
             if lowerBound >= upperBound
                 error('Lower bound must be less than upper bound.');
             end
             
             obj.lowerBound = lowerBound;
             obj.upperBound = upperBound;
-            obj.currentState = 'Increase';  % Initialize with Increase state
+            obj.currentState = initialState;  % Initialize with Increase state
         end
         
         % Method to update the state based on the current value
@@ -29,22 +29,13 @@ classdef sm
         % Name: updateState
         % Purpose: Adjusts the current state based on a given value by switching between 'Increase' and 'Decrease' states.
         % Pre: value is a numeric type
-        % Post: currentState is 'Increase' if value <= lowerBound and was in 'Decrease'; 
-        %       currentState is 'Decrease' if value >= upperBound and was in 'Increase'
+        % Post: currentState is 1 if value <= lowerBound and was in 0
+        %       currentState is 0 if value >= upperBound and was in 1
         % Usage: obj = obj.updateState(120);
-        function obj = updateState(obj, value)
-            switch obj.currentState
-                case 'Increase'
-                    if value >= obj.upperBound
-                        obj.currentState = 'Decrease';
-                    end
-                case 'Decrease'
-                    if value <= obj.lowerBound
-                        obj.currentState = 'Increase';
-                    end
-            end
+        function obj = updateState(obj, newState)
+            obj.currentState = newState;
         end
-        
+
         % Method to get the current state
         %
         % Name: getCurrentState
@@ -59,18 +50,26 @@ classdef sm
         % Method to make a decision based on the current state
         %
         % Name: makeDecision
-        % Purpose: Provides a decision recommendation based on the current state, suggesting either 'Increase value' or 'Decrease value'.
+        % Purpose: Provides a decision recommendation based on the current state, suggesting either 1 for Increase value or 0 for Decrease value.
         % Pre: None
-        % Post: Returns 'Increase value' if currentState is 'Increase'; 'Decrease value' if currentState is 'Decrease'
+        % Post: Returns 0 if value is above upper bounds; 1 if value is
+        % below lower bounds. If value is in bounds, current state will be
+        % returned.
         % Usage: decision = obj.makeDecision();
         function decision = makeDecision(obj)
             switch obj.currentState
-                case 'Increase'
-                    decision = 'Increase value';
-                case 'Decrease'
-                    decision = 'Decrease value';
-                otherwise
-                    decision = 'Unknown state';
+                case 1
+                    if 1 >= obj.upperBound
+                        decision = 0;
+                    else
+                        decision = obj.currentState;
+                    end
+                case 0
+                    if 1 <= obj.lowerBound
+                        decision = 1;
+                    else
+                        decision = obj.currentState;
+                    end
             end
         end
 

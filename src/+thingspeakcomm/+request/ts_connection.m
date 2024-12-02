@@ -58,7 +58,7 @@ classdef ts_connection
         % Pre: Field must be a valid numeric field ID; Value must be valid for the ThingSpeak channel.
         % Post: Data is written to the specified field if successful; raises an error if all retries fail.
         % Usage: obj.writeChannel(2, 42);
-        function writeChannel(obj, Field, Value)
+        function success = writeChannel(obj, Field, Value)
             success = false;
             maxRetries = 20;
             retries = 0;
