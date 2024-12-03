@@ -30,7 +30,7 @@ while true
         % Refill water if in Increase state
         currentWaterLevel = currentWaterLevel + refillAmount;
         fprintf('Refilling water. New Water Level: %.2f\n', currentWaterLevel);
-        ThingSpeakConnection.writeChannel(2,1)
+        thingSpeakConnection.writeChannel(2,1)
     elseif strcmp(decision, 'Decrease value')
         % Deplete water if in Decrease state
         currentWaterLevel = currentWaterLevel - depletionRate;
