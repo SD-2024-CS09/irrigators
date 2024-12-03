@@ -18,11 +18,11 @@ webserverCommConfig = JSONtoObj(serverConfigFile);
 thingSpeakUpdateStateRequest = thingspeakcomm.request.ts_connection(requestStateConfig.channelID, requestStateConfig.readAPIKey, requestStateConfig.writeAPIKey);
 
 % Initialize the StateMachine object
-wateringStateMachine = statemachine.sm(stateMachineConfig.initalState, stateMachineConfig.lowerBound, stateMachineConfig.upperBound);
+wateringStateMachine = statemachine.sm_numerical(stateMachineConfig.initalState, stateMachineConfig.lowerBound, stateMachineConfig.upperBound);
 
 webserverFileListener = listener.file_listener(webserverCommConfig.fileHandle);
 webserverFileListenerEvent = addlistener(webserverFileListener, 'StateChange', @onWebUpdateCallback);
-webserverFileListener.openListener(0.25);
+webserverFileListener.openListener(webserverCommConfig.readDelay);
 
 % Reads a Json file passed by file name into an object with JSON values as
 % properties.
@@ -35,8 +35,7 @@ fclose(f);
 end
 
 function onWebUpdateCallback(~, evtData)
-% reads the latest watering status value in the JSON file
-display(evtData)
+% Checks that data from the server file update is in the correct json format
 try
     jsonData = jsondecode(evtData.fileContents);
     if ~isfield(jsonData, 'watering')
@@ -44,14 +43,15 @@ try
     end
     value = jsonData.watering;
     updateState(value);
-    fprintf('Initial watering status: %d\n', value);
 catch ME
     error('Error reading JSON file: %s', ME.message);
 end
 end
 
+% Update both the local state machine and the ThingSpeak channel with new
+% value
 function updateState(newState)
 global wateringStateMachine thingSpeakUpdateStateRequest;
-wateringStateMachine.updateState(newState);
+wateringStateMachine = wateringStateMachine.updateState(newState);
 thingSpeakUpdateStateRequest.writeChannel(1, newState);
 end
