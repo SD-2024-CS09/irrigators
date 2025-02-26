@@ -72,9 +72,8 @@ classdef sm_numerical
                         decision = 1;
                         return;
                     end
-                otherwise
-                    decision = obj.currentState;
             end
+            decision = obj.currentState;
         end
 
         % Setter for lower bound

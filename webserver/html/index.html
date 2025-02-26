@@ -44,8 +44,7 @@
   </div>
   <div class="iot-data">
     <h2>Current Soil Moisture</h2>
-    <iframe width="450" height="260" style="border: 1px solid #cccccc;"
-      src="https://thingspeak.com/channels/2667716/charts/1?bgcolor=%23ffffff&color=%23d62020&days=1&dynamic=true&results=200&type=line"></iframe>
+<iframe width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/2667716/charts/1?bgcolor=%23ffffff&color=%23d62020&days=5&dynamic=true&results=100&type=line&xaxis=Time&yaxis=Moisture"></iframe>
     <div class="water-switch-container">
       <div>
         <p>Watering Status: </p>
@@ -135,20 +134,18 @@
   }
 
   async function waitForWaterStatusChange(new_state) {
-    // We can only write every 15 seconds, so the delay for check is 17 seconds initally
-    // and then 5 seconds on retry
-    timeout_max_retries = 3;
-    timeout_time_per_retry = 5000;
+    timeout_max_retries = 10;
+    timeout_time_per_retry = 2500;
 
-    await sleep(10000)
+    await sleep(5000)
     var status;
     for (let i = 0; i < timeout_max_retries; i++) {
       status = await fetchWateringStatus();
       if (status == new_state) {
-        setWateringButtonText(status);
+        setValsOnRequest(status);
         return true;
       }
-      await sleep(5000)
+      await sleep(timeout_time_per_retry)
     }
     setValsOnRequest(status);
     alert("Error: Watering status could not be updated.")
