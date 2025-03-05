@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Irrigator Irrigation</title>
+  <title>Irrigator Irrigation System</title>
   <style>
     .banner {
       background: #AAAAAA;
@@ -40,22 +40,45 @@
 
 <body>
   <div class="banner">
-    <h1>Irrigator Irrigation</h1>
+    <h1>Irrigator Irrigation System</h1>
   </div>
-  <div class="iot-data">
-    <h2>Current Soil Moisture</h2>
-    <iframe width="450" height="260" style="border: 1px solid #cccccc;"
-      src="https://thingspeak.com/channels/2667716/charts/1?bgcolor=%23ffffff&color=%23d62020&days=1&dynamic=true&results=200&type=line"></iframe>
-    <div class="water-switch-container">
-      <div>
-        <p>Watering Status: </p>
-        <b>
-          <p id="watering-status"></p>
-        </b>
-        <div class="loader" id="water-switch-loader"></div>
+  <div style="display: flex; flex-direction: row; justify-content: space-around;">
+    <div class="iot-data">
+      <h2>Current Soil Moisture</h2>
+      <iframe width="450" height="260" "
+      src="
+        https://thingspeak.com/channels/2667716/charts/1?bgcolor=%23ffffff&color=%23d62020&days=14&dynamic=true&results=100&type=line&xaxis=Time&yaxis=Moisture"></iframe>
+      <div class="water-switch-container">
+        <div>
+          <p>Watering Status: </p>
+          <b>
+            <p id="watering-status"></p>
+          </b>
+          <div class="loader" id="water-switch-loader"></div>
+        </div>
+        <button id="water-switch"></button>
       </div>
-      <button id="water-switch"></button>
     </div>
+    <div>
+      <h1>State Machine Configuration</h1>
+      <div>
+        <p>Current Maximum: </p>
+        <b>
+          <p id="current-max"> 0.42 </p>
+        </b>
+        <p>Current Minimum: </p>
+        <b>
+          <p id="current-min"> 0.2 </p>
+        </b>
+      </div>
+      <h2>Edit State Machine Values</h2>
+      <form action="" method="POST">
+        State Machine Maximum: <input type="text" name="State Machine Maximum"><br>
+        State Machine Minimum: <input type="text" name="State Machine Minimum"><br>
+        <input type="submit" value="Apply">
+      </form>
+    </div>
+  </div>
 </body>
 
 <script>
