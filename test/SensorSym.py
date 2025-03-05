@@ -1,5 +1,6 @@
 import requests
 import time
+import datetime
 
 def write_ts(url, value):
     if not isinstance(value, (int, float)):
@@ -32,19 +33,24 @@ if __name__ == "__main__":
     read_SM_decsion = "https://api.thingspeak.com/channels/2756308/fields/1.json?results=1"
     write_SM_decsion = "https://api.thingspeak.com/update?api_key=LEOTSB0DZBX02WH1&field1="
 
+    last_write = datetime.datetime.now() - datetime.timedelta(seconds=16)
     while True:
         time.sleep(.5)
         choice = input('\n1. Write sensor value\n2. Read SM Decision\nEnter choice: ')
         if choice == '1':
             val = input('Enter floating point value: ')
-            try:
-                resp = write_ts(write_sensor_values, float(val))
-                print(resp)
-                if resp == 200:
-                    print("Value written to ThingSpeak please wait 15 seconds before writting again\n")
-            except ValueError:
-                print("Value must be a float\n")
-                continue
+            if((datetime.datetime.now() - last_write).total_seconds() > 16):
+                try:
+                    resp = write_ts(write_sensor_values, float(val))
+                    last_write = datetime.datetime.now()
+                    print(resp)
+                    if resp == 200:
+                        print("Value written to ThingSpeak please wait 16 seconds before writting again\n")
+                except ValueError:
+                    print("Value must be a float\n")
+                    continue
+            else:
+                print(f"must wait {16 - (datetime.datetime.now() - last_write).total_seconds()} more seconds before writting again\n")
         elif choice == '2':
             data = read_ts(read_SM_decsion)
             print(f"StateMachine decision is {data['feeds'][0]['field1']}\n")
