@@ -36,7 +36,7 @@ if __name__ == "__main__":
     last_write = datetime.datetime.now() - datetime.timedelta(seconds=16)
     while True:
         time.sleep(.5)
-        choice = input('\n1. Write sensor value\n2. Read SM Decision\nEnter choice: ')
+        choice = input('\n1. Write sensor value\n2. Read SM Decision\n3. Quit\nEnter choice: ')
         if choice == '1':
             val = input('Enter floating point value: ')
             if((datetime.datetime.now() - last_write).total_seconds() > 16):
@@ -48,9 +48,12 @@ if __name__ == "__main__":
                         print("Value written to ThingSpeak please wait 16 seconds before writting again\n")
                 except ValueError:
                     print("Value must be a float\n")
-                    continue
             else:
                 print(f"must wait {16 - (datetime.datetime.now() - last_write).total_seconds()} more seconds before writting again\n")
         elif choice == '2':
             data = read_ts(read_SM_decsion)
             print(f"StateMachine decision is {data['feeds'][0]['field1']}\n")
+        elif choice == '3':
+            break
+        else:
+            print('invalid input try again')
