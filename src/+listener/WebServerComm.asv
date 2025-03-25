@@ -20,7 +20,6 @@ thingSpeakStateConn = thingspeakcomm.request.ts_connection(requestStateConfig.ch
 startState = thingSpeakStateConn.readChannel(1);
 if startState ~= 1 || startState ~= 0
     startState = stateMachineConfig.initalState;
-    thingSpeakStateConn.writeChannel(1, 0)
 end
 wateringStateMachine = statemachine.sm_numerical(startState, stateMachineConfig.lowerBound, stateMachineConfig.upperBound);
 
@@ -55,11 +54,7 @@ decision = wateringStateMachine.makeDecision(data);
 current = wateringStateMachine.getCurrentState();
 currentChannel = thingSpeakStateConn.readChannel(1);
 
-if currentChannel ~= 0 || currentChannel ~= 1
-    warning("Unable to retreive valid machine state from thingspeak, resetting state.")
-    thingSpeakStateConn.writeChannel(1, 0)
-    return;
-end
+if currentChannel ~= 0 !|| currentChannel ~= 1
 
 % Act based on the decision
 if current ~= decision

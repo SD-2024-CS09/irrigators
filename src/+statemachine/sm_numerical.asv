@@ -11,7 +11,7 @@ classdef sm_numerical
 
     properties(Constant)
         smMax = 100;
-        smMin = 0;
+        smMin = 100;
     end
 
     
@@ -32,14 +32,8 @@ classdef sm_numerical
                 error('Lower bound must be less than upper bound.');
             end
 
-            if lowerBound < obj.smMin
-                error("Lower bound %d is below range [%d, %d]", lowerBound, obj.smMin, obj.smMax);
-            end
-
-
-            if upperBound > obj.smMax
-                error("Upper bound %d is above range [%d, %d]", lowerBound, obj.smMin, obj.smMax);
-            end
+            if lowerBound < smMin
+                error('SM Minimum %')
             
             obj.lowerBound = lowerBound;
             obj.upperBound = upperBound;
