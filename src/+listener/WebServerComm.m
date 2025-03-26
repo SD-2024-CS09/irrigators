@@ -1,4 +1,4 @@
-global wateringStateMachine thingSpeakUpdateStateRequest;
+global wateringStateMachine thingSpeakStateConn;
 
 % Read config files for set up values.
 commConfigFile = "/etc/irrigator/comm_config.json";
@@ -19,14 +19,15 @@ thingSpeakStateConn = thingspeakcomm.request.ts_connection(requestStateConfig.ch
 % TODO: If Thingspeak Channel has no values or is unavaliable init to 0
 startState = thingSpeakStateConn.readChannel(1);
 if startState ~= 1 || startState ~= 0
-    startState = stateMachineConfig.initalState;
-    thingSpeakStateConn.writeChannel(1, 0)
+    startState = 0;
+    thingSpeakStateConn.writeChannel(1, 0);
 end
-wateringStateMachine = statemachine.sm_numerical(startState, stateMachineConfig.lowerBound, stateMachineConfig.upperBound);
+wateringStateMachine = statemachine.sm_numerical(startState, str2double(stateMachineConfig.lowerBound), str2double(stateMachineConfig.upperBound));
 
-fileAndServerListener = listener.file_and_service_listener(wateringFile, thingSpeakValueConn);
+fileAndServerListener = listener.file_and_service_listener(wateringFile, smConfigFile, thingSpeakValueConn);
 
 webserverFileListenerEvent = addlistener(fileAndServerListener, 'StateChange', @onWebUpdateCallback);
+boundsFileListenerEvent = addlistener(fileAndServerListener, 'BoundsChange', @onBoundsUpdateCallback);
 thingspeakUpdateValueListenerEvent = addlistener(fileAndServerListener, 'UpdatePulled', @onThingSpeakValueUpdate);
 
 fileAndServerListener.openListener(commConfig.serverComm.wateringReadDelay);
@@ -46,6 +47,24 @@ catch ME
 end
 end
 
+function onBoundsUpdateCallback(~, evtData)
+global wateringStateMachine;
+try
+    jsonData = jsondecode(evtData.fileContents);
+    if ~isfield(jsonData, 'lowerBound')
+        error('Field "lowerBound" not found in the JSON file.');
+    end
+    if ~isfield(jsonData, 'upperBound')
+        error('Field "upperBound" not found in the JSON file.');
+    end
+    newLower = str2double(jsonData.lowerBound);
+    newUpper = str2double(jsonData.upperBound);
+    wateringStateMachine.setBounds(newLower, newUpper);
+catch ME
+    error('Error setting bounds: %s', ME.message);
+end
+end
+
 function onThingSpeakValueUpdate(~, evtData)
 global wateringStateMachine thingSpeakStateConn ;
 
@@ -55,9 +74,9 @@ decision = wateringStateMachine.makeDecision(data);
 current = wateringStateMachine.getCurrentState();
 currentChannel = thingSpeakStateConn.readChannel(1);
 
-if currentChannel ~= 0 || currentChannel ~= 1
-    warning("Unable to retreive valid machine state from thingspeak, resetting state.")
-    thingSpeakStateConn.writeChannel(1, 0)
+if currentChannel ~= 0 && currentChannel ~= 1
+    warning("Unable to retreive valid machine state from thingspeak, resetting state.");
+    thingSpeakStateConn.writeChannel(1, 0);
     return;
 end
 
