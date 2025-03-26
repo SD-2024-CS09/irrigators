@@ -48,7 +48,6 @@ end
 end
 
 function onBoundsUpdateCallback(~, evtData)
-global wateringStateMachine;
 try
     jsonData = jsondecode(evtData.fileContents);
     if ~isfield(jsonData, 'lowerBound')
@@ -57,11 +56,10 @@ try
     if ~isfield(jsonData, 'upperBound')
         error('Field "upperBound" not found in the JSON file.');
     end
-    newLower = str2double(jsonData.lowerBound);
-    newUpper = str2double(jsonData.upperBound);
-    wateringStateMachine.setBounds(newLower, newUpper);
+    value = str2double(jsonData.watering);
+    updateState(value);
 catch ME
-    error('Error setting bounds: %s', ME.message);
+    error('Error reading JSON file: %s', ME.message);
 end
 end
 
