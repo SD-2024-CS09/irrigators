@@ -1,0 +1,16 @@
+{
+  "serverComm": {
+    "wateringReadDelay" : 5,
+    "boundsReadDelay" : 5
+  },
+  "requestSensor": {
+    "channelID": <ThingSpeak sensor channel ID>,
+    "readAPIKey": "<ThingSpeak read API key for sensor channel>",
+    "writeAPIKey": "<ThingSpeak write API key for sensor channel>"
+  },
+  "requestState": {
+    "channelID": <ThingSpeak state channel ID>,
+    "readAPIKey": "<ThingSpeak read API key for state channel>",
+    "writeAPIKey": "<ThingSpeak write API key for state channel>"
+  }
+}
