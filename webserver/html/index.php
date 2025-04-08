@@ -38,7 +38,7 @@
     
     #errorOutput {
       width: 100%;
-      height: 50px;
+      height: 52px;
     }
   </style>
 </head>
@@ -66,7 +66,7 @@
     </div>
     <div>
       <h1>State Machine Configuration</h1>
-      <iframe id="errorOutput" name="errorOutput" frameBorder="0"> </iframe>
+      <iframe id="errorOutput" name="errorOutput" frameBorder="0" style="overflow:hidden;" scrolling="no"> </iframe>
       <div>
         <p>Current Maximum: </p>
         <b>
