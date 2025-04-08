@@ -2,12 +2,18 @@
 % instead of "increasing" and "decreasing" in order to be compatable with
 % webserver IPC
 
-classdef sm_numerical
+classdef sm_numerical < handle
     properties
         lowerBound
         upperBound
         currentState
     end
+
+    properties(Constant)
+        smMax = 1;
+        smMin = 0;
+    end
+
     
     methods
         
@@ -19,8 +25,20 @@ classdef sm_numerical
         % Post: Object is created with specified bounds and inital state
         % Usage: obj = sm(10, 100, 0);
         function obj = sm_numerical(initialState, lowerBound, upperBound)
+            if initialState ~= 1 && initialState ~= 0
+                initialState = 0;
+            end
             if lowerBound >= upperBound
                 error('Lower bound must be less than upper bound.');
+            end
+
+            if lowerBound < obj.smMin
+                error("Lower bound %d is below range [%d, %d]", lowerBound, obj.smMin, obj.smMax);
+            end
+
+
+            if upperBound >obj.smMax
+                error("Upper bound %d is above range [%d, %d]", upperBound, obj.smMin, obj.smMax);
             end
             
             obj.lowerBound = lowerBound;
@@ -72,9 +90,8 @@ classdef sm_numerical
                         decision = 1;
                         return;
                     end
-                otherwise
-                    decision = obj.currentState;
             end
+            decision = obj.currentState;
         end
 
         % Setter for lower bound
@@ -85,11 +102,16 @@ classdef sm_numerical
         % Post: lowerBound is updated to bound if condition is met; otherwise, an error is raised.
         % Usage: obj = obj.setLower(20);
         function obj = setLower(obj, bound)
-            if bound < obj.upperBound
-                obj.lowerBound = bound;
-            else
+            if bound > obj.upperBound
                 error('Lower bound must be less than upper bound.');
             end
+
+            if bound < obj.smMin
+                error("Lower bound %d is below range [%d, %d]", bound, obj.smMin, obj.smMax);
+            end
+
+            obj.lowerBound = bound;
+
         end
 
         % Method to set the upper bound 
@@ -100,11 +122,15 @@ classdef sm_numerical
         % Post: upperBound is updated to bound if condition is met; otherwise, an error is raised.
         % Usage: obj = obj.setUpper(150);
         function obj = setUpper(obj, bound)
-            if bound > obj.lowerBound
-                obj.upperBound = bound;
-            else
-                error('Upper bound must be greater than lower bound.');
+            if obj.lowerBound > bound
+                error('Lower bound must be less than upper bound.');
             end
+
+            if bound > obj.smMax
+                error("Upper bound %d is above range [%d, %d]", bound, obj.smMin, obj.smMax);
+            end
+
+            obj.upperBound = bound;
         end
 
         % Method to set both bounds simultaneously with validation
@@ -115,12 +141,8 @@ classdef sm_numerical
         % Post: lowerBound and upperBound are updated; an error is raised if the condition is not met.
         % Usage: obj = obj.setBounds(15, 120);
         function obj = setBounds(obj, lower, upper)
-            if upper > lower
-                obj.upperBound = upper;
-                obj.lowerBound = lower;
-            else
-                error('Lower bound must be less than upper bound.');
-            end
+            obj.setUpper(upper);
+            obj.setLower(lower);
         end
     end
 end
