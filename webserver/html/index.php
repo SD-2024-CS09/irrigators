@@ -38,7 +38,7 @@
     
     #errorOutput {
       width: 100%;
-      height: 50px;
+      height: 52px;
     }
   </style>
 </head>
@@ -66,7 +66,7 @@
     </div>
     <div>
       <h1>State Machine Configuration</h1>
-      <iframe id="errorOutput" name="errorOutput" frameBorder="0"> </iframe>
+      <iframe id="errorOutput" name="errorOutput" frameBorder="0" style="overflow:hidden;" scrolling="no"> </iframe>
       <div>
         <p>Current Maximum: </p>
         <b>
@@ -190,21 +190,21 @@
     setWateringSwitchLoadingView(true);
   }
 
-  async function waitForWaterStatusChange(new_state) {
+  async function waitForWaterStatusChange(new_state, prevStatus) {
     // We can only write every 15 seconds, so the delay for check is 17 seconds initally
     // and then 5 seconds on retry
-    timeout_max_retries = 3;
-    timeout_time_per_retry = 5000;
+    timeout_max_retries = 30;
+    timeout_time_per_retry = 1000;
 
-    await sleep(10000)
-    var status;
+    await sleep(5000)
+    var status = prevStatus;
     for (let i = 0; i < timeout_max_retries; i++) {
       status = await fetchWateringStatus();
       if (status == new_state) {
-        setWateringButtonText(status);
+        setValsOnRequest(status);
         return true;
       }
-      await sleep(5000)
+      await sleep(timeout_time_per_retry);
     }
     setValsOnRequest(status);
     alert("Error: Watering status could not be updated.")
@@ -213,10 +213,7 @@
 
   async function fetchSwitchWatering() {
     var status = await fetchWateringStatus();
-    let new_state = 0;
-    if (status == 0) {
-      new_state = 1;
-    }
+    let new_state = status == 0 ? 1 : 0;
     fetch("updatewaterswitch.php", {
       method: "POST",
       headers: {
@@ -232,13 +229,13 @@
         }
         return response.json();
       })
-      .then((res) => {
-        if (res > 0) {
-          alert(`Error: ${res}`)
+      .then((response) => {
+        if (response > 0) {
+          alert(`Error: ${response}`)
         }
         else {
           setValsOnLoading(new_state);
-          waitForWaterStatusChange(new_state);
+          waitForWaterStatusChange(new_state, status);
         }
       });
   }
