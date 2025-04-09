@@ -1,0 +1,13 @@
+# Configuration Files
+## comm_config
+
+"comm_config.json" should be located in /etc/irrigator. It contains the IDs and API keys needed for the Matlab app to read/write to the ThingSpeak sensor and state channels. It also contains the delay for how often the Matlab app checks the water and bounds config files for updates.
+
+# IPC Files
+## sm_config
+
+"sm_config.json" should be located in /var/lib/irrigator. It contains the last saved values for the upper and lower bounds of the state machine. sm_config can be written to by the webserver, and is watched for updates by the matlab app.
+
+## watering
+
+"watering.json" is used solely for aborting the state machine. It should remain empty unless written to by the webserver.
