@@ -1,15 +1,19 @@
 #!/bin/bash
 
 # Define file paths
-comm_config_dir="configs/etc/irrigator"
+comm_config_dir="etc/irrigator"
 comm_config_file="$comm_config_dir/comm_config_test.json"
 
-sm_config_dir="configs/var/lib/irrigator"
+sm_config_dir="var/lib/irrigator"
 sm_config_file="$sm_config_dir/sm_config_test.json"
+
+watering_config_dir="var/lib/irrigator"
+watering_config_file="$watering_config_dir/watering_test.json"
 
 # Create directories if they don't exist
 mkdir -p "$comm_config_dir"
 mkdir -p "$sm_config_dir"
+mkdir -p "$watering_config_dir"
 
 --------- Comm Config Inputs ---------
 echo "Enter values for comm_config.json"
@@ -63,3 +67,7 @@ cat <<EOF > "$sm_config_file"
 EOF
 
 echo "Created: $sm_config_file"
+
+touch $watering_config_file
+
+echo "Created: $watering_config_file"
