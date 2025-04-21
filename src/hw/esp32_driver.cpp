@@ -109,12 +109,11 @@ void loop() {
 
     // Update the timer
     lastTime = millis();
-
+  }
     // Failsafe: turn off pump if it's been on too long
     if (pumpIsOn && (millis() - pumpStartTime > maxPumpOnDuration)) {
       Serial.println("Failsafe triggered: Pump has been on too long. Turning off.");
       digitalWrite(RELAY_PIN, LOW);
       pumpIsOn = false;
-    }
   }
 }
