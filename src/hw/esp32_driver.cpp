@@ -29,6 +29,11 @@ const unsigned long timerDelay = 16000;  // delay between updates in ms
 // Variables for sensor data
 float soilMoisture = 0.0; 
 
+// Failsafe variables
+bool pumpIsOn = false;
+unsigned long pumpStartTime = 0;
+const unsigned long maxPumpOnDuration = 60000; // 60 seconds
+
 void setup() {
   // Initialize serial monitors
   Serial.begin(115200);
@@ -70,11 +75,16 @@ void loop() {
       
       // Act on the watering decision
       if (wateringDecision == 1) {
-         digitalWrite(RELAY_PIN, HIGH);
+        digitalWrite(RELAY_PIN, HIGH);
+        if (!pumpIsOn) {
+          pumpIsOn = true;
+          pumpStartTime = millis();
+        }
       } 
       else if (wateringDecision == 0) {
-         digitalWrite(RELAY_PIN, LOW);
-      } 
+        digitalWrite(RELAY_PIN, LOW);
+        pumpIsOn = false;
+      }
       else {
         Serial.print("Error: Invalid watering decision value: ");
         Serial.println(wateringDecision);
@@ -99,5 +109,12 @@ void loop() {
 
     // Update the timer
     lastTime = millis();
+
+    // Failsafe: turn off pump if it's been on too long
+    if (pumpIsOn && (millis() - pumpStartTime > maxPumpOnDuration)) {
+      Serial.println("Failsafe triggered: Pump has been on too long. Turning off.");
+      digitalWrite(RELAY_PIN, LOW);
+      pumpIsOn = false;
+    }
   }
 }
