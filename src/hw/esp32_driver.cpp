@@ -40,10 +40,7 @@ void setup() {
   Serial2.begin(9600, SERIAL_8N1, RX, TX);
 
   // Connect to Wi-Fi
-  Serial.begin(115200);
-  delay(10);
   Serial.print(F("Connecting to network: "));
-  Serial.println(SSID);
   WiFi.disconnect(true); 
   WiFi.begin(ssid, WPA2_AUTH_PEAP, EAP_IDENTITY, EAP_USERNAME, EAP_PASSWORD); 
   while (WiFi.status() != WL_CONNECTED) {
