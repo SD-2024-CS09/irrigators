@@ -8,7 +8,7 @@ Water conservation is a critical challenge in agriculture. Traditional irrigatio
 - [Features](#features)
 - [System Architecture](#system-architecture)
 - [Installation](#installation)
-- [Usage](#usage)
+- [Instructions](#instructions)
 - [Team Responsibilities](#team-responsibilities)
 
 ## Overview
