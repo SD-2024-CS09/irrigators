@@ -33,7 +33,6 @@ This smart watering system monitors soil moisture and other environmental condit
 
 ## Installation
 
-> _Note: Detailed setup instructions will be added upon final hardware deployment._
 
 ### Software Requirements
 
@@ -49,7 +48,7 @@ This smart watering system monitors soil moisture and other environmental condit
 - Soil moisture sensors
 - Relay + water pump system
 
-## Usage
+## Instructions
 
 1. Deploy sensors and connect to the Arduino + ESP32 using wiring diagram.
 2. Upload the control code and connect to Wi-Fi.
