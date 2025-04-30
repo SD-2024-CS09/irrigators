@@ -55,9 +55,7 @@
   <div style="display: flex; flex-direction: row; justify-content: space-around;">
     <div class="iot-data">
       <h2>Current Soil Moisture</h2>
-      <iframe width="450" height="260" "
-      src="
-        https://thingspeak.com/channels/2667716/charts/1?bgcolor=%23ffffff&color=%23d62020&days=14&dynamic=true&results=100&type=line&xaxis=Time&yaxis=Moisture"></iframe>
+      --- Insert Thingspeak Sensor Data iFrame Here ---
       <div class="water-switch-container">
         <div>
           <p>Watering Status: </p>
