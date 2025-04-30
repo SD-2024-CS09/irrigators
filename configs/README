@@ -3,6 +3,10 @@
 
 "comm_config.json" should be located in /etc/irrigator. It contains the IDs and API keys needed for the Matlab app to read/write to the ThingSpeak sensor and state channels. It also contains the delay for how often the Matlab app checks the water and bounds config files for updates.
 
+## path_config
+
+"path_config.json" should also be located in /etc/irrigator. It contains the paths to the folder containing the user's 'matlab.bin' and /src files.
+
 # IPC Files
 ## sm_config
 

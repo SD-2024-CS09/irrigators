@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # Define file paths
-comm_config_dir="etc/irrigator"
+comm_config_dir="home/irrigator"
 comm_config_file="$comm_config_dir/comm_config_test.json"
+path_config_file="$comm_config_dir/path_config.json"
 
-sm_config_dir="var/lib/irrigator"
+sm_config_dir="home/lib/irrigator"
 sm_config_file="$sm_config_dir/sm_config_test.json"
 
 watering_config_dir="var/lib/irrigator"
@@ -15,7 +16,23 @@ mkdir -p "$comm_config_dir"
 mkdir -p "$sm_config_dir"
 mkdir -p "$watering_config_dir"
 
---------- Comm Config Inputs ---------
+# --------- Comm Config Inputs ---------
+echo "Enter values for path_config.json"
+read -p "Enter path to Matlab Installation (i.e. '/home/MATLAB/R2024b/bin/matlab): " matlab_path
+read -p "Enter path to Irrigator installation (i.e. '/home/irrigator'): " irrigator_path
+
+# Write path_config.json
+cat <<EOF > "$path_config_file"
+{
+  "matlabPath": "$matlab_path",
+  "irrigatorPath": "$irrigator_path"
+}
+EOF
+
+echo "Created: $path_config_file"
+
+# --------- Comm Config Inputs ---------
+echo ""
 echo "Enter values for comm_config.json"
 
 read -p "Enter wateringReadDelay (in seconds): " wateringReadDelay
@@ -51,7 +68,7 @@ EOF
 
 echo "Created: $comm_config_file"
 
---------- SM Config Inputs ---------
+# --------- SM Config Inputs ---------
 echo ""
 echo "Enter values for sm_config.json"
 
