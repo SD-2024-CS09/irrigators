@@ -50,12 +50,14 @@ This smart watering system monitors soil moisture and other environmental condit
 
 ## Instructions
 
-1. Deploy sensors and connect to the Arduino + ESP32 using wiring diagram.
-2. Upload the control code and connect to Wi-Fi.
-3. Create two ThingSpeak channels one for decision and one for sensor values.
-4. Configure src/hw/secrets.h.example for connecting to Wifi and ThingSpeak.
-5. run configs/create_configs.sh and enter API keys and initial state
-6. WEBSERVER STUFF
+1. Deploy sensors and connect to the Arduino + ESP32 using setup/wiring_diagram.
+2. Configure src/hw/secrets.h.example for connecting to Wifi and ThingSpeak and remove .example from file name.
+3. Upload src/hw/arduino_program.ino to the Arduino.
+4. Upload src/hw/esp32_driver.cpp to the ESP32.
+5. Create a thingSpeak account [here](https://thingspeak.mathworks.com/login?skipSSOCheck=true).
+6. Create two ThingSpeak channels one for decision and one for sensor values and a field in each channel instructions [here](https://www.mathworks.com/help/thingspeak/collect-data-in-a-new-channel.html).
+7. run configs/create_configs.sh and enter API keys and initial state.
+8. WEBSERVER STUFF
 
 ## Team Responsibilities
 
