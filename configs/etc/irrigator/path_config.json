@@ -1,4 +1,4 @@
 {
-  "matlabPath": "/home/calebl/Documents/MATLAB/R2024b/bin/matlab",
-  "irrigatorPath": "/home/calebl/Documents/irrigators"
+  "matlabPath": "/example/path/MATLAB/R2024b/bin/matlab",
+  "irrigatorPath": "/example/path/irrigators"
 }
