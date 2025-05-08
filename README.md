@@ -20,15 +20,18 @@ This smart watering system monitors soil moisture and other environmental condit
 
 ## Features
 
-- Real-time soil moisture monitoring
+![Website](setup/webpage.png)
+- Real-time soil moisture monitoring (see video setup/stateMachineDemo)
 - Automated irrigation control
 - Integration with ThingSpeak and MATLAB
 - ESP32 + Arduino-based hardware system
-- Web dashboard hosted via Nginx
+- Web dashboard hosted via Nginx (see video setup/WebsiteDemo)
+
 
 
 ## System Architecture
 
+![Design](setup/diagram.png)
 - **Sensors:** Soil moisture sensor
 - **Microcontrollers:** Arduino Uno R3, ESP32
 - **Communication:** Wi-Fi data transmission to ThingSpeak
@@ -107,6 +110,9 @@ matlab -batch "run('run_sm_tests.m');"
 - **Hardware (Arduino + ESP32):** Arvand, Matt  
 
 
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](setup/LICENSE) file for details.
 
 
 
